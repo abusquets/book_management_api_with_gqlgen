@@ -1,0 +1,59 @@
+version: "3.7"
+services:
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_PASSWORD=book_management_api
+      - POSTGRES_USER=book_management_api
+      - POSTGRES_DB=book_management_api
+    ports:
+      - 7432:5432
+    volumes:
+      - ./shared:/shared
+      - pg_data:/var/lib/postgresql/data
+      - ./db/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U book_management_api"]
+      interval: 3s
+      timeout: 5s
+      retries: 3
+
+  api:
+    build:
+      context: .
+      target: dev
+    env_file:
+      - app.env
+    volumes:
+      - .:/app:cached
+      - go_cache:/go/pkg/mod:delegated
+    ports:
+      - 8080:8080
+      - 2345:2345
+    depends_on:
+      - db
+      # db:
+      #   condition: service_healthy
+    command:
+      # - |
+      #   /bin/sh -c 'echo "Waiting for postgres...$$DATABASE_URL" \
+      #   && migrate -path db/migrations -database $$DATABASE_URL -verbose up \
+      #   && air -c .air.toml'
+      - |
+        /bin/sh -c 'air -c .air.toml'
+    # restart: on-failure
+
+  # api-prod (wip):
+  #   build:
+  #     context: .
+  #   env_file:
+  #     - app.env
+  #   ports:
+  #     - 8081:8080
+  #   command: ["runserver"]
+  #   depends_on:
+  #     - db
+
+volumes:
+  pg_data:
+  go_cache:
