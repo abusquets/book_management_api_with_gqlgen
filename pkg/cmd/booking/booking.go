@@ -1,0 +1,112 @@
+package booking
+
+import (
+	"fmt"
+
+	"github.com/urfave/cli/v2"
+
+	"github.com/abusquets/book_management_api_with_gqlgen/pkg/cmd/server"
+)
+
+func NewCommand(args []string) error {
+
+	cliApp := &cli.App{
+		Before: func(cCtx *cli.Context) error {
+			return nil
+		},
+		Commands: []*cli.Command{
+			{
+				Name:    "test",
+				Aliases: []string{"c"},
+				Usage:   "test command",
+				Action: func(cCtx *cli.Context) error {
+					fmt.Println("Cli is working fine!!!")
+					return nil
+				},
+			},
+		},
+	}
+	// box.Items = append(box.Items, item)
+	cliApp.Commands = append(cliApp.Commands, server.RunGraphqlServerCommand())
+
+	if cliApp.Metadata == nil {
+		cliApp.Metadata = make(map[string]interface{})
+	}
+	return cliApp.Run(args)
+
+	// 	// Load the config here so that we can extract features from it.
+	// 	config, err := client.LoadConfig()
+	// 	if err != nil {
+	// 		fmt.Fprintf(os.Stderr, "WARNING: Error reading config file: %v\n", err)
+	// 	}
+
+	// 	// Declare cmdFeatures and cmdColorzied here so we can access them in the PreRun hooks
+	// 	// without doing a chain of calls into the command's FlagSet
+	// 	var cmdFeatures veleroflag.StringArray
+	// 	var cmdColorzied veleroflag.OptionalBool
+
+	// 	c := &cobra.Command{
+	// 		Use:   name,
+	// 		Short: "Back up and restore Kubernetes cluster resources.",
+	// 		Long: `Velero is a tool for managing disaster recovery, specifically for Kubernetes
+	// cluster resources. It provides a simple, configurable, and operationally robust
+	// way to back up your application state and associated data.
+
+	// If you're familiar with kubectl, Velero supports a similar model, allowing you to
+	// execute commands such as 'velero get backup' and 'velero create schedule'. The same
+	// operations can also be performed as 'velero backup get' and 'velero schedule create'.`,
+	// 		// PersistentPreRun will run before all subcommands EXCEPT in the following conditions:
+	// 		//  - a subcommand defines its own PersistentPreRun function
+	// 		//  - the command is run without arguments or with --help and only prints the usage info
+	// 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+	// 			features.Enable(config.Features()...)
+	// 			features.Enable(cmdFeatures...)
+
+	// 			switch {
+	// 			case cmdColorzied.Value != nil:
+	// 				color.NoColor = !*cmdColorzied.Value
+	// 			default:
+	// 				color.NoColor = !config.Colorized()
+	// 			}
+	// 		},
+	// 	}
+
+	// 	f := client.NewFactory(name, config)
+	// 	f.BindFlags(c.PersistentFlags())
+
+	// 	// Bind features directly to the root command so it's available to all callers.
+	// 	c.PersistentFlags().Var(&cmdFeatures, "features", "Comma-separated list of features to enable for this Velero process. Combines with values from $HOME/.config/velero/config.json if present")
+
+	// 	// Color will be enabled or disabled for all subcommands
+	// 	c.PersistentFlags().Var(&cmdColorzied, "colorized", "Show colored output in TTY. Overrides 'colorized' value from $HOME/.config/velero/config.json if present. Enabled by default")
+
+	// 	c.AddCommand(
+	// 		backup.NewCommand(f),
+	// 		schedule.NewCommand(f),
+	// 		restore.NewCommand(f),
+	// 		server.NewCommand(f),
+	// 		nodeagent.NewCommand(f),
+	// 		version.NewCommand(f),
+	// 		get.NewCommand(f),
+	// 		install.NewCommand(f),
+	// 		uninstall.NewCommand(f),
+	// 		describe.NewCommand(f),
+	// 		create.NewCommand(f),
+	// 		runplugin.NewCommand(f),
+	// 		plugin.NewCommand(f),
+	// 		delete.NewCommand(f),
+	// 		cliclient.NewCommand(),
+	// 		completion.NewCommand(),
+	// 		repo.NewCommand(f),
+	// 		bug.NewCommand(),
+	// 		backuplocation.NewCommand(f),
+	// 		snapshotlocation.NewCommand(f),
+	// 		debug.NewCommand(f),
+	// 	)
+
+	// 	// init and add the klog flags
+	// 	klog.InitFlags(flag.CommandLine)
+	// 	c.PersistentFlags().AddGoFlagSet(flag.CommandLine)
+
+	// return c
+}
